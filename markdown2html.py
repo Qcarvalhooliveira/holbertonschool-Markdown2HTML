@@ -12,6 +12,22 @@ def parse_heading(line):
         return f"<h{level}>{line_content}</h{level}>"
     return line
 
+def parse_unordered_list(line, in_list):
+    """
+    Converts a Markdown unordered list item to an HTML list item.
+    Returns the HTML line and a flag indicating if we are currently inside a list.
+    """
+    if line.startswith("- "):
+        if not in_list:
+            return "<ul>\n<li>" + line[2:].strip() + "</li>", True
+        else:
+            return "<li>" + line[2:].strip() + "</li>", True
+    else:
+        if in_list:
+            return "</ul>\n" + line, False
+        else:
+            return line, in_list
+
 def main():
     """
     The main function of the script.
@@ -27,9 +43,12 @@ def main():
     try:
         with open(markdown_file, 'r') as f:
             with open(html_file, 'w') as html:
+                in_list = False
                 for line in f:
-                    html_line = parse_heading(line)
+                    html_line, in_list = parse_unordered_list(parse_heading(line), in_list)
                     html.write(html_line + '\n')
+                if in_list:
+                    html.write("</ul>\n")
     except FileNotFoundError:
         print(f"Missing {markdown_file}", file=sys.stderr)
         sys.exit(1)
