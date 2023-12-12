@@ -1,8 +1,10 @@
+![markdown](https://github.com/Qcarvalhooliveira/holbertonschool-Markdown2HTML/blob/master/image/markdown.png)
+
 # Markdown to HTML :computer:
 
 ## **Description** :speech_balloon:
 
-* Markdown is a simple markup language used for creating formatted text using plain-text syntax, which isn't natively displayable in web browsers. To display it on the web, it needs to be converted to HTML, the standard web markup language. This conversion involves parsing the Markdown syntax and translating it into corresponding HTML tags; for example, italic in Markdown becomes <em>italic</em> in HTML, and # Heading in Markdown translates to <h1>Heading</h1> in HTML. This process ensures that the original formatting and semantic meaning of the Markdown text are preserved when displayed in a web browser, using a variety of available tools and libraries across different programming languages.
+* Markdown is a simple markup language used for creating formatted text using plain-text syntax, which isn't natively displayable in web browsers. To display it on the web, it needs to be converted to HTML, the standard web markup language. This conversion involves parsing the Markdown syntax and translating it into corresponding HTML tags; for example, italic in Markdown becomes <em>italic</em> in HTML, and # Heading in Markdown translates to **Heading** in HTML. This process ensures that the original formatting and semantic meaning of the Markdown text are preserved when displayed in a web browser, using a variety of available tools and libraries across different programming languages.
 
 ## **Tasks** :books:
 
