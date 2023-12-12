@@ -1,6 +1,16 @@
 #!/usr/bin/python3
-"""Markdonw module"""
+"""Markdown to HTML converter module"""
 import sys
+
+def parse_heading(line):
+    """
+    Converts a Markdown heading to an HTML heading.
+    """
+    if line.startswith("#"):
+        level = line.count('#')  
+        line_content = line.strip('#').strip()
+        return f"<h{level}>{line_content}</h{level}>"
+    return line
 
 def main():
     """
@@ -16,7 +26,10 @@ def main():
 
     try:
         with open(markdown_file, 'r') as f:
-            pass
+            with open(html_file, 'w') as html:
+                for line in f:
+                    html_line = parse_heading(line)
+                    html.write(html_line + '\n')
     except FileNotFoundError:
         print(f"Missing {markdown_file}", file=sys.stderr)
         sys.exit(1)
