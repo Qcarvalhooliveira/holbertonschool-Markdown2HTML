@@ -30,6 +30,28 @@ def parse_list(line, in_list, list_type):
         else:
             return line, in_list, list_type
 
+def parse_paragraphs(lines):
+    """
+    Converts blocks of text to HTML paragraphs.
+    """
+    in_paragraph = False
+    html_lines = []
+    for line in lines:
+        if line.strip() == "":
+            if in_paragraph:
+                html_lines.append("</p>")
+                in_paragraph = False
+        else:
+            if not in_paragraph:
+                html_lines.append("<p>")
+                in_paragraph = True
+            else:
+                html_lines.append("<br />")
+            html_lines.append(line)
+    if in_paragraph:
+        html_lines.append("</p>")
+    return html_lines
+
 def main():
     """
     The main function of the script.
@@ -44,10 +66,12 @@ def main():
 
     try:
         with open(markdown_file, 'r') as f:
+            lines = [line.strip('\n') for line in f]
+            lines = parse_paragraphs(lines)
             with open(html_file, 'w') as html:
                 in_list = False
                 list_type = None
-                for line in f:
+                for line in lines:
                     html_line, in_list, list_type = parse_list(parse_heading(line), in_list, list_type)
                     html.write(html_line + '\n')
                 if in_list:
