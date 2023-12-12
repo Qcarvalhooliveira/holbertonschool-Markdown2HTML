@@ -12,21 +12,23 @@ def parse_heading(line):
         return f"<h{level}>{line_content}</h{level}>"
     return line
 
-def parse_unordered_list(line, in_list):
+def parse_list(line, in_list, list_type):
     """
-    Converts a Markdown unordered list item to an HTML list item.
+    Converts a Markdown list item to an HTML list item.
+    Handles both ordered and unordered lists.
     Returns the HTML line and a flag indicating if we are currently inside a list.
     """
-    if line.startswith("- "):
+    if line.startswith(("- ", "* ")):
         if not in_list:
-            return "<ul>\n<li>" + line[2:].strip() + "</li>", True
+            tag = "ul" if line.startswith("- ") else "ol"
+            return f"<{tag}>\n<li>" + line[2:].strip() + "</li>", True, tag
         else:
-            return "<li>" + line[2:].strip() + "</li>", True
+            return "<li>" + line[2:].strip() + "</li>", True, list_type
     else:
         if in_list:
-            return "</ul>\n" + line, False
+            return f"</{list_type}>\n" + line, False, None
         else:
-            return line, in_list
+            return line, in_list, list_type
 
 def main():
     """
@@ -44,11 +46,12 @@ def main():
         with open(markdown_file, 'r') as f:
             with open(html_file, 'w') as html:
                 in_list = False
+                list_type = None
                 for line in f:
-                    html_line, in_list = parse_unordered_list(parse_heading(line), in_list)
+                    html_line, in_list, list_type = parse_list(parse_heading(line), in_list, list_type)
                     html.write(html_line + '\n')
                 if in_list:
-                    html.write("</ul>\n")
+                    html.write(f"</{list_type}>\n")
     except FileNotFoundError:
         print(f"Missing {markdown_file}", file=sys.stderr)
         sys.exit(1)
