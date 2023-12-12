@@ -37,15 +37,20 @@ def parse_paragraphs(lines):
     in_paragraph = False
     html_lines = []
     for line in lines:
-        if line.strip() == "":
+        if line.startswith(("<h", "<ul", "<li", "</ul>", "</ol>")):
+            if in_paragraph:
+                html_lines.append("</p>")
+                in_paragraph = False
+            html_lines.append(line)
+        elif line.strip() == "":
             if in_paragraph:
                 html_lines.append("</p>")
                 in_paragraph = False
         else:
-            if not in_paragraph:
+            if not in_paragraph and line != "":
                 html_lines.append("<p>")
                 in_paragraph = True
-            else:
+            elif in_paragraph:
                 html_lines.append("<br />")
             html_lines.append(line)
     if in_paragraph:
@@ -67,13 +72,16 @@ def main():
     try:
         with open(markdown_file, 'r') as f:
             lines = [line.strip('\n') for line in f]
-            lines = parse_paragraphs(lines)
+            processed_lines = []
+            in_list = False
+            list_type = None
+            for line in lines:
+                processed_line, in_list, list_type = parse_list(parse_heading(line), in_list, list_type)
+                processed_lines.append(processed_line)
+            processed_lines = parse_paragraphs(processed_lines)
             with open(html_file, 'w') as html:
-                in_list = False
-                list_type = None
-                for line in lines:
-                    html_line, in_list, list_type = parse_list(parse_heading(line), in_list, list_type)
-                    html.write(html_line + '\n')
+                for line in processed_lines:
+                    html.write(line + '\n')
                 if in_list:
                     html.write(f"</{list_type}>\n")
     except FileNotFoundError:
