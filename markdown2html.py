@@ -37,9 +37,13 @@ def parse_paragraphs(lines):
     in_paragraph = False
     html_lines = []
     for line in lines:
-        if line.startswith(("<h", "<ul", "<li", "</ul>", "</ol>")):
+        if line.startswith(("<h", "</ul>", "</ol>")):
             if in_paragraph:
                 html_lines.append("</p>")
+                in_paragraph = False
+            html_lines.append(line)
+        elif line.startswith(("<ul", "<li", "<ol")):
+            if in_paragraph:
                 in_paragraph = False
             html_lines.append(line)
         elif line.strip() == "":
@@ -56,6 +60,7 @@ def parse_paragraphs(lines):
     if in_paragraph:
         html_lines.append("</p>")
     return html_lines
+
 
 def main():
     """
