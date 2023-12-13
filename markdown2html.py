@@ -2,6 +2,24 @@
 """Markdown to HTML converter module"""
 import sys
 import re
+import hashlib
+
+
+def convert_md5(text):
+    """
+    Converts a given text to its MD5 hash.
+    """
+    return hashlib.md5(text.encode()).hexdigest()
+
+def parse_special_syntax(line):
+    """
+    Converts special Markdown syntax to HTML or other formats.
+    """
+    line = re.sub(r'\[\[(.*?)\]\]', lambda m: convert_md5(m.group(1)), line)
+
+    line = re.sub(r'\(\((.*?)\)\)', lambda m: m.group(1).replace('c', '').replace('C', ''), line)
+
+    return line
 
 def parse_bold_and_emphasis(line):
     """
@@ -90,6 +108,7 @@ def main():
             in_list = False
             list_type = None
             for line in lines:
+                line = parse_special_syntax(line)
                 line = parse_bold_and_emphasis(line)
                 processed_line, in_list, list_type = parse_list(parse_heading(line), in_list, list_type)
                 processed_lines.append(processed_line)
