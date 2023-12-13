@@ -1,6 +1,15 @@
 #!/usr/bin/python3
 """Markdown to HTML converter module"""
 import sys
+import re
+
+def parse_bold_and_emphasis(line):
+    """
+    Converts Markdown bold and emphasis syntax to HTML tags.
+    """
+    line = re.sub(r'\*\*(.*?)\*\*', r'<b>\1</b>', line)
+    line = re.sub(r'__(.*?)__', r'<em>\1</em>', line)
+    return line
 
 def parse_heading(line):
     """
@@ -18,7 +27,7 @@ def parse_list(line, in_list, list_type):
     Handles both ordered and unordered lists.
     Returns the HTML line and a flag indicating if we are currently inside a list.
     """
-    if line.startswith(("- ", "* ")):
+    if line.startswith(("- ", "* ")): 
         if not in_list:
             tag = "ul" if line.startswith("- ") else "ol"
             return f"<{tag}>\n<li>" + line[2:].strip() + "</li>", True, tag
@@ -81,6 +90,7 @@ def main():
             in_list = False
             list_type = None
             for line in lines:
+                line = parse_bold_and_emphasis(line)
                 processed_line, in_list, list_type = parse_list(parse_heading(line), in_list, list_type)
                 processed_lines.append(processed_line)
             processed_lines = parse_paragraphs(processed_lines)
